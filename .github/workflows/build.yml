@@ -23,7 +23,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: 'maven'
-        working-directory: eclipse.jdt.ls
+          cache-dependency-path: eclipse.jdt.ls/pom.xml
 
       - name: Build
         run: |
