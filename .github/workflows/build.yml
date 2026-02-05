@@ -1,0 +1,42 @@
+name: Daily Build JDTLS (JDK 21)
+
+on:
+  schedule:
+    # 每天 UTC 00:00 运行 (北京时间 08:00)
+    - cron: '0 0 * * *'
+  workflow_dispatch: 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout JDTLS repository
+        uses: actions/checkout@v4
+        with:
+          repository: eclipse-jdtls/eclipse.jdt.ls
+          fetch-depth: 1
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build with Maven
+        # 使用 JDK 21 进行编译，并跳过单元测试以加快速度
+        run: ./mvnw clean verify -DskipTests
+
+      - name: Locate Build Artifacts
+        run: |
+          mkdir -p dist
+          # 提取构建生成的仓库压缩包
+          find org.eclipse.jdt.ls.product/target/repository -maxdepth 1 \( -name "*.tar.gz" -o -name "*.zip" \) -exec cp {} ./dist/ \;
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: jdtls-jdk21-${{ github.run_id }}
+          path: ./dist/
+          retention-days: 7
