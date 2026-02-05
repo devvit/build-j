@@ -1,0 +1,52 @@
+diff --git a/org.eclipse.jdt.ls.core/gradle/android/init.gradle b/org.eclipse.jdt.ls.core/gradle/android/init.gradle
+index 1f63e98..57d82df 100644
+--- a/org.eclipse.jdt.ls.core/gradle/android/init.gradle
++++ b/org.eclipse.jdt.ls.core/gradle/android/init.gradle
+@@ -106,17 +106,26 @@ class JavaLanguageServerAndroidPlugin implements Plugin<Project> {
+     private static File getAndroidSDKFile(Project project) {
+         Object android = project.property(ANDROID_PROPERTY)
+         try {
+-            Object bootClasspathList = android.properties.get("bootClasspath")
+-            if (bootClasspathList instanceof List) {
+-                for (Object bootClasspath : ((List) bootClasspathList)) {
+-                    if (bootClasspath instanceof File) {
+-                        File file = (File) bootClasspath
+-                        if (file.getAbsolutePath().endsWith("android.jar") && file.exists()) {
+-                            return file
+-                        }
+-                    }
+-                }
+-            }
++List bootClasspathList = project.androidComponents.sdkComponents.bootClasspath.orNull
++if (null != bootClasspathList) {
++    for (Object bootClasspath : bootClasspathList) {
++        File file = bootClasspath.asFile
++        if (file.getAbsolutePath().endsWith("android.jar") && file.exists()) {
++            return file
++        }
++    }
++}
++            // Object bootClasspathList = android.properties.get("bootClasspath")
++            // if (bootClasspathList instanceof List) {
++            //     for (Object bootClasspath : ((List) bootClasspathList)) {
++            //         if (bootClasspath instanceof File) {
++            //             File file = (File) bootClasspath
++            //             if (file.getAbsolutePath().endsWith("android.jar") && file.exists()) {
++            //                 return file
++            //             }
++            //         }
++            //     }
++            // }
+         } catch (NullPointerException ignored) {
+             // NPE occurs when the variant doesn't have related properties, we just skip these unsupported scenarios
+         }
+@@ -474,6 +483,9 @@ class JavaLanguageServerAndroidPlugin implements Plugin<Project> {
+ 
+ allprojects {
+     afterEvaluate {
++		afterEvaluate {
++
+         it.getPlugins().apply(JavaLanguageServerAndroidPlugin)
++		}
+     }
+ }
