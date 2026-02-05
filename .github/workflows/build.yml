@@ -19,11 +19,11 @@ jobs:
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
-        working-directory: eclipse.jdt.ls
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: 'maven'
+        working-directory: eclipse.jdt.ls
 
       - name: Build
         run: |
