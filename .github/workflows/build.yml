@@ -1,10 +1,11 @@
 name: Daily Build JDTLS (JDK 21)
 
 on:
-  schedule:
+  push:
+  # schedule:
     # 每天 UTC 00:00 运行 (北京时间 08:00)
-    - cron: '0 0 * * *'
-  workflow_dispatch: 
+    # - cron: '0 0 * * *'
+  # workflow_dispatch: 
 
 jobs:
   build:
