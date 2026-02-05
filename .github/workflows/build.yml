@@ -13,16 +13,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Fetch jdtls
+        run: |
+          git clone --depth 1 https://github.com/eclipse-jdtls/eclipse.jdt.ls
+
       - name: Set up JDK 21
         uses: actions/setup-java@v4
+        working-directory: eclipse.jdt.ls
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build with Maven
+      - name: Build
         run: |
-          git clone --depth 1 https://github.com/eclipse-jdtls/eclipse.jdt.ls
           cd eclipse.jdt.ls
           git apply ../1.patch
           ./mvnw clean verify -DskipTests
