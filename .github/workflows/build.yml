@@ -2,6 +2,8 @@ name: Daily Build JDTLS
 
 on:
   push:
+    paths:
+      - '**.js'
   schedule:
     - cron: '0 0 * * sun'
 
