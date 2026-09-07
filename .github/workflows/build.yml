@@ -1,9 +1,9 @@
-name: Daily Build JDTLS (JDK 21)
+name: Daily Build JDTLS
 
 on:
   push:
-  # schedule:
-    # - cron: '0 0 * * *'
+  schedule:
+    - cron: '0 0 * * sun'
 
 jobs:
   build:
@@ -11,16 +11,16 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Fetch jdtls
         run: |
           git clone --depth 1 https://github.com/eclipse-jdtls/eclipse.jdt.ls
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v6
         with:
-          java-version: '21'
+          java-version: '25'
           distribution: 'temurin'
           cache: 'maven'
           cache-dependency-path: eclipse.jdt.ls/pom.xml
@@ -28,7 +28,7 @@ jobs:
       - name: Build
         run: |
           cd eclipse.jdt.ls
-          git apply ../1.patch
+          # git apply ../1.patch
           ./mvnw clean verify -DskipTests
 
       - name: Locate Build Artifacts
@@ -42,4 +42,4 @@ jobs:
         with:
           name: jdtls-${{ github.run_id }}
           path: eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/*.zip
-          retention-days: 3
+          retention-days: 7
